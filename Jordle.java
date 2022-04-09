@@ -57,10 +57,17 @@ import javafx.stage.Stage;
 
 public class Jordle extends Application {
 
+    int row = 0;
+    int column = 0;
+    boolean check = true;
+    Rectangle[][] rectArr = new Rectangle[6][5];
+    Label[][] labArr = new Label[6][5];
+    Random r = new Random();
+    int rand = r.nextInt(Words.list.size());
+    String word = Words.list.get(rand);
+
     @Override
     public void start(Stage primaryStage) {
-        // Create a pane and set its properties
-        // BackgroundFill back = new BackgroundFill("Pink");
 
         Random r = new Random();
         int rand = r.nextInt(Words.list.size());
@@ -107,27 +114,25 @@ public class Jordle extends Application {
         hbox2.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         // vbox.setFill(Color.WHITE);
         // hbox2.setFill(Color.WHITE);
-
+        
         // Place nodes in the pane
         //add(Node child, int columnIndex, int rowIndex)
         for (int i = 0; i < 6; ++i) {
             for (int u = 0; u < 5; ++u) {
                 Rectangle rect = new Rectangle(0, 0, 80, 80);
                 rect.setFill(Color.WHITE);
-                rect.setStroke(Color.BLACK);
+                rect.setStrokeWidth(1.5);
+                rect.setStroke(Color.color(.80, 0.80, 0.80, 1.0));
                 pane.add(rect, u, i);
-                
+                Label text =  new Label(" ");
+                pane.add(text, u, i);
+                text.setFont(new Font("Monospaced", 40));
+                pane.setHalignment(text, HPos.CENTER);
+                rectArr[i][u] = rect;
+                labArr[i][u] = text;
             }
         }
-        Rectangle test = new Rectangle(0, 0, 80, 80);
-        test.setFill(Color.WHITE);
-        test.setStroke(Color.GRAY);
-        pane.add(test, 6, 5);
-        Label text =  new Label(" ");
-        // text.setAlignment(Pos.CENTER);
-        pane.add(text, 0, 0);
-        text.setFont(new Font("Monospaced", 40));
-        pane.setHalignment(text, HPos.CENTER);
+
         // pane.add(incorrectText, 2, 8);
         // pane.add(restart, 4, 0)s;
         // pane.add(instructions, 0, 0);
@@ -180,15 +185,75 @@ public class Jordle extends Application {
         secondaryStage.setScene(new Scene(flowPane, 260, 190));        
         secondaryStage.show(); // Display the secondary stage
 
-        
-        text.setOnKeyPressed((KeyEvent e) -> {
-            if (e.getText().length() > 0 && Character.isLetter(e.getText().charAt(0))) {
-                test.setStroke(Color.BLACK);
-                text.setText(e.getText().toUpperCase());
-            }
-        });
+        scene1.setOnKeyPressed(new AddWord());
 
-        text.requestFocus();
+        // rectArr[0][0].setOnKeyPressed((KeyEvent e) ->{
+
+        //     if (e.getText().length() > 0 && Character.isLetter(e.getText().charAt(0))) {
+        //         if (column == 5) {
+        //             check = false;
+        //         } else {
+        //             labArr[row][column].setText(e.getText().toUpperCase());
+        //             rectArr[row][column].setStroke(Color.BLACK);
+        //         }   
+        //     } else if (e.getText().length() > 0 && e.getText().equals("\n")) {
+        //         if (column == 5) {
+        //             //run check if the word is right
+        //             ;
+        //         } else {
+        //             // errorStage.show();
+        //             ;
+        //         }
+        //     }
+        // });
+        // while (check) {
+        //     scene1.setOnKeyPressed((KeyEvent e) -> {
+        //             if (e.getText().length() > 0 && Character.isLetter(e.getText().charAt(0))) {
+        //                 labArr[row][column].setText(e.getText().toUpperCase());
+        //                 rectArr[row][column].setStroke(Color.BLACK);
+        //             }
+        //     });
+        //     row++;
+        //     column++;
+        //     check = false;
+        // }
+        
+                // rectArr[0][0].setStroke(Color.BLACK);
+            //     if (column == 5) {
+            //         // check = false;
+            //     } else {
+            //         labArr[0][0].setText(e.getText().toUpperCase());
+            //         rectArr[0][0].setStroke(Color.BLACK);
+            //     }   
+            // } else if (e.getText().length() > 0 && e.getText().equals("\n")) {
+            //     if (column == 5) {
+            //         //run check if the word is right
+            //         ;
+            //     } else {
+            //         // errorStage.show();
+            //         ;
+            //     }
+
+        // public void test () {
+        //     if (e.getText().length() > 0 && Character.isLetter(e.getText().charAt(0))) {
+        //         if (column == 5) {
+        //             check = false;
+        //         } else {
+        //             labArr[row][column++].setText(e.getText().toUpperCase());
+        //             rectArr[row][column++].setStroke(Color.BLACK);
+        //         }   
+        //     } else if (e.getText().length() > 0 && e.getText().equals("\n")) {
+        //         if (column == 5) {
+        //             //run check if the word is right
+        //             ;
+        //         } else {
+        //             // errorStage.show();
+        //             ;
+        //         }
+        //     }
+
+        //     labArr[row][column].requestFocus();
+        // }
 
         instructions.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -203,6 +268,28 @@ public class Jordle extends Application {
                 start(primaryStage);
             }
         });
+    }
+
+    class AddWord implements EventHandler<KeyEvent> {
+        @Override // Override the handle method
+        public void handle(KeyEvent e) {
+            if (e.getText().length() > 0 && Character.isLetter(e.getText().charAt(0))) {
+                if (column != 5) {
+                    labArr[row][column].setText(e.getText().toUpperCase());
+                    rectArr[row][column++].setStroke(Color.BLACK);
+                }
+            } else if (e.getText().length() > 0 && e.getText().equals("\n")) {
+                if (column == 5) {
+                    //run check if the word is right
+                    ;
+                } else {
+                    // errorStage.show();
+                    ;
+                }
+            }
+
+            labArr[row][column].requestFocus();
+        }
     }
 
 
