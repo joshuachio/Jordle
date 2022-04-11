@@ -3,6 +3,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Text;
 import java.util.Random;
+import java.util.ArrayList;
+import javafx.scene.input.KeyCode;
+import javafx.scene.text.FontWeight;
 
 import org.w3c.dom.css.Rect;
 
@@ -65,20 +68,47 @@ public class Jordle extends Application {
     Random r = new Random();
     int rand = r.nextInt(Words.list.size());
     String word = Words.list.get(rand);
+    Stage errorStage = new Stage();
+    Label inGameText = new Label();
+
+    private Stage makeStage() {
+        errorStage.setTitle("Error");
+        Label errorText = new Label("Not enough letters");
+        errorText.setWrapText(true);
+        errorText.setTextAlignment(TextAlignment.CENTER);
+        errorText.setMaxWidth(150);
+        errorText.setMaxHeight(30);
+        errorText.setTranslateX(15);
+        errorText.setTranslateY(15);
+        errorText.setFont(new Font("nyt-franklin", 14));
+        FlowPane errorPane = new FlowPane();
+        errorPane.getChildren().add(errorText);
+        errorPane.setPadding(new Insets(20, 50, 30, 20));
+        Scene errorScene = new Scene(errorPane);
+        errorStage.setScene(errorScene);
+        return errorStage;
+    }
+
+    private void gameText() {
+        inGameText.setText("Try guessing a word!");
+        inGameText.setFont(new Font("Monospaced", 20));
+        inGameText.setFont(new Font("Monospaced", 20));
+        inGameText.setWrapText(true);
+    }
 
     @Override
     public void start(Stage primaryStage) {
 
-        Random r = new Random();
-        int rand = r.nextInt(Words.list.size());
-        String word = Words.list.get(rand);
+        // Random r = new Random();
+        // int rand = r.nextInt(Words.list.size());
+        // String word = Words.list.get(rand);
         GridPane pane = new GridPane();
         Label label = new Label("Jordle");
         label.setFont(new Font("Arial Bold", 50));
         label.setTextAlignment(TextAlignment.CENTER);
         Button restart = new Button("Restart");
         Button instructions = new Button("How to Play");
-        Label inGameText = new Label("Game over. The word was: " + word + ".");
+        
         // if (true) {
         //     Label inGameText = new Label("Game over. The word was: " + word + ".");
         // } else if (true) {
@@ -86,23 +116,23 @@ public class Jordle extends Application {
         // } else {
         //     Label inGameText = new Label("Try guessing a word!");
         // }
-        inGameText.setFont(new Font("Monospaced", 20));
+        
 
         // inGameText.setTextAlignment(TextAlignment.CENTER);
-        inGameText.setWrapText(true);
+        
         // pane.setAlignment(Pos.CENTER);
        
         VBox vbox = new VBox(25);
         HBox hbox = new HBox(250);
         hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().add(instructions);
+        // hbox.getChildren().add(instructions);
         hbox.getChildren().add(label);
-        hbox.getChildren().add(restart);
+        // hbox.getChildren().add(restart);
         hbox.setPadding(new Insets(30));
         vbox.setPadding(new Insets(1));
         pane.setPadding(new Insets(20, 50, 0, 195));
         
-
+        gameText();
         HBox hbox2 = new HBox();
         hbox2.getChildren().add(inGameText);
         hbox2.setAlignment(Pos.CENTER);
@@ -126,16 +156,14 @@ public class Jordle extends Application {
                 pane.add(rect, u, i);
                 Label text =  new Label(" ");
                 pane.add(text, u, i);
-                text.setFont(new Font("Monospaced", 40));
+                // text.setFont(new Font("Monospaced", FontWeight.BOLD, 40));
+                text.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
                 pane.setHalignment(text, HPos.CENTER);
                 rectArr[i][u] = rect;
                 labArr[i][u] = text;
             }
         }
 
-        // pane.add(incorrectText, 2, 8);
-        // pane.add(restart, 4, 0)s;
-        // pane.add(instructions, 0, 0);
         pane.setHgap(7);
         pane.setVgap(7);
         vbox.getChildren().add(hbox);
@@ -185,7 +213,9 @@ public class Jordle extends Application {
         secondaryStage.setScene(new Scene(flowPane, 260, 190));        
         secondaryStage.show(); // Display the secondary stage
 
-        scene1.setOnKeyPressed(new AddWord());
+        
+
+        
 
         // rectArr[0][0].setOnKeyPressed((KeyEvent e) ->{
 
@@ -255,43 +285,97 @@ public class Jordle extends Application {
         //     labArr[row][column].requestFocus();
         // }
 
-        instructions.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                secondaryStage.show();
-            }
+        // instructions.setOnMouseClicked(new EventHandler<ActionEvent>() {
+        //     @Override
+        //     public void handle(ActionEvent event) {
+        //         secondaryStage.show();
+        //     }
+        // });
+        
+        instructions.setOnMouseClicked(e -> {secondaryStage.show();});
+        
+
+        restart.setOnMouseClicked(e -> {
+            row = 0;
+            column = 0;
+            start(primaryStage);
         });
 
-        restart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                start(primaryStage);
-            }
-        });
+        AddWord test = new AddWord();
+        scene1.setOnKeyPressed(test); 
+
+
+
     }
 
     class AddWord implements EventHandler<KeyEvent> {
+
         @Override // Override the handle method
         public void handle(KeyEvent e) {
-            if (e.getText().length() > 0 && Character.isLetter(e.getText().charAt(0))) {
-                if (column != 5) {
-                    labArr[row][column].setText(e.getText().toUpperCase());
-                    rectArr[row][column++].setStroke(Color.BLACK);
+            if (e.getCode() == KeyCode.BACK_SPACE) {
+                if (column > 0 && column < 6) {
+                    labArr[row][--column].setText(e.getText());
+                    rectArr[row][column].setStroke(Color.color(.80, 0.80, 0.80, 1.0));
                 }
-            } else if (e.getText().length() > 0 && e.getText().equals("\n")) {
+            } else if (e.getCode() == KeyCode.ENTER) {
                 if (column == 5) {
-                    //run check if the word is right
-                    ;
+                    ArrayList<Character> inputArr = new ArrayList();
+                    ArrayList<Character> wordArr = new ArrayList();
+                    int counter = 0;
+                    for (int i = 0; i < 5; ++i) {
+                        wordArr.add(word.charAt(i));
+                        inputArr.add(labArr[row][i].getText().toLowerCase().charAt(0));
+                    }
+                    System.out.println(inputArr.toString());
+                    System.out.println(wordArr.toString());
+                    for (int i = 0; i < 5; ++i) {
+                        if (wordArr.get(i) == inputArr.get(i)) {
+                            rectArr[row][i].setFill(new Color(115.0 / 255.0, 171.0 / 255.0, 120.0 / 255.0, 1));
+                            rectArr[row][i].setStroke(Color.WHITE);
+                            labArr[row][i].setTextFill(Color.WHITE);
+                        } else if (wordArr.contains(inputArr.get(i))) {
+                            rectArr[row][i].setFill(new Color(201.0 / 255.0, 180.0 / 255.0, 88.0 / 255.0, 1));
+                            rectArr[row][i].setStroke(Color.WHITE);
+                            labArr[row][i].setTextFill(Color.WHITE);
+                        } else {
+                            rectArr[row][i].setFill(Color.GRAY);
+                            rectArr[row][i].setStroke(Color.WHITE);
+                            labArr[row][i].setTextFill(Color.WHITE);
+                        }
+                        if (rectArr[row][i].getFill().equals(new Color(115.0 / 255.0, 171.0 / 255.0, 120.0 / 255.0, 1))) {
+                            ++counter;
+                        }
+                    }
+                    if (counter == 5) {
+                        gameText();
+                        inGameText.setText("Congratulations! You guessed the word!");
+                    } else if (row == 5) {
+                        gameText();
+                        inGameText.setText("Game over. The word was: " + word + ".");
+                    } else {
+                        column = 0;
+                        ++row;
+                    }
                 } else {
-                    // errorStage.show();
+                    makeStage();
+                    errorStage.show();
+                }
+            } else {
+                try {
+                    if (e.getText().charAt(0) >= (int) 'a' && e.getText().charAt(0) <= (int) 'z') {
+                        if (column != 5) {
+                            labArr[row][column].setText(e.getText().toUpperCase());
+                            rectArr[row][column++].setStroke(Color.BLACK);
+                        }
+                    }
+                } catch(Throwable b) {
+                    ;
+                } finally {
                     ;
                 }
             }
-
-            labArr[row][column].requestFocus();
-        }
+            }
     }
-
 
     public static void main(String[] args) {
         launch(args);
