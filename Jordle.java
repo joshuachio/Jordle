@@ -99,13 +99,10 @@ public class Jordle extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        // Random r = new Random();
-        // int rand = r.nextInt(Words.list.size());
-        // String word = Words.list.get(rand);
         GridPane pane = new GridPane();
         Label label = new Label("Jordle");
         label.setFont(new Font("Arial Bold", 50));
-        label.setTextAlignment(TextAlignment.CENTER);
+        // label.setTextAlignment(TextAlignment.CENTER);
         Button restart = new Button("Restart");
         Button instructions = new Button("How to Play");
         
@@ -124,29 +121,23 @@ public class Jordle extends Application {
        
         VBox vbox = new VBox(25);
         HBox hbox = new HBox(250);
-        hbox.setAlignment(Pos.CENTER);
-        // hbox.getChildren().add(instructions);
-        hbox.getChildren().add(label);
-        // hbox.getChildren().add(restart);
-        hbox.setPadding(new Insets(30));
-        vbox.setPadding(new Insets(1));
-        pane.setPadding(new Insets(20, 50, 0, 195));
         
+        hbox.getChildren().add(instructions);
+        hbox.getChildren().add(label);
+        hbox.getChildren().add(restart);
+        hbox.setPadding(new Insets(30, 25, 30, 25));
+        hbox.setAlignment(Pos.CENTER);
+        // vbox.setPadding(new Insets(1));
+        // pane.setPadding(new Insets(20, 100, 20, 100));
+        pane.setAlignment(Pos.CENTER);
         gameText();
         HBox hbox2 = new HBox();
         hbox2.getChildren().add(inGameText);
         hbox2.setAlignment(Pos.CENTER);
         hbox2.setPadding(new Insets(20));
-
-
         hbox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         vbox.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
         hbox2.setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
-        // vbox.setFill(Color.WHITE);
-        // hbox2.setFill(Color.WHITE);
-        
-        // Place nodes in the pane
-        //add(Node child, int columnIndex, int rowIndex)
         for (int i = 0; i < 6; ++i) {
             for (int u = 0; u < 5; ++u) {
                 Rectangle rect = new Rectangle(0, 0, 80, 80);
@@ -156,8 +147,7 @@ public class Jordle extends Application {
                 pane.add(rect, u, i);
                 Label text =  new Label(" ");
                 pane.add(text, u, i);
-                // text.setFont(new Font("Monospaced", FontWeight.BOLD, 40));
-                text.setFont(Font.font("Verdana", FontWeight.BOLD, 30));
+                text.setFont(Font.font("Monospaced", FontWeight.BOLD, 30));
                 pane.setHalignment(text, HPos.CENTER);
                 rectArr[i][u] = rect;
                 labArr[i][u] = text;
@@ -170,20 +160,11 @@ public class Jordle extends Application {
         vbox.getChildren().add(pane);
         vbox.getChildren().add(hbox2);
 
+        Scene scene = new Scene(vbox);
 
-
-
-        
-
-        
-        // vbox.setAlignment(Pos.RIGHT);
-        Scene scene1 = new Scene(vbox);
-        // Scene scene = new Scene(pane);
         primaryStage.setTitle("Jordle"); // Set the stage title
-        
-        // primaryStage.setScene(scene); // Place the scene in the stage
-        scene1.setFill(Color.RED);
-        primaryStage.setScene(scene1);
+
+        primaryStage.setScene(scene);
         primaryStage.show(); // Display the stage
 
         // Stage secondaryStage = new Stage(); // Create A new stage
@@ -237,7 +218,7 @@ public class Jordle extends Application {
         //     }
         // });
         // while (check) {
-        //     scene1.setOnKeyPressed((KeyEvent e) -> {
+        //     scene.setOnKeyPressed((KeyEvent e) -> {
         //             if (e.getText().length() > 0 && Character.isLetter(e.getText().charAt(0))) {
         //                 labArr[row][column].setText(e.getText().toUpperCase());
         //                 rectArr[row][column].setStroke(Color.BLACK);
@@ -302,7 +283,7 @@ public class Jordle extends Application {
         });
 
         AddWord test = new AddWord();
-        scene1.setOnKeyPressed(test); 
+        scene.setOnKeyPressed(test); 
 
 
 
@@ -312,6 +293,7 @@ public class Jordle extends Application {
 
         @Override // Override the handle method
         public void handle(KeyEvent e) {
+            labArr[0][0].requestFocus();
             if (e.getCode() == KeyCode.BACK_SPACE) {
                 if (column > 0 && column < 6) {
                     labArr[row][--column].setText(e.getText());
