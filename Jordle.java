@@ -236,7 +236,6 @@ public class Jordle extends Application {
                 }
             } else if (e.getCode() == KeyCode.ENTER) {
                 if (column == 5) {
-                    System.out.println(word);
                     ArrayList<Character> inputArr = new ArrayList();
                     ArrayList<Character> wordArr = new ArrayList();
                     int counter = 0;
